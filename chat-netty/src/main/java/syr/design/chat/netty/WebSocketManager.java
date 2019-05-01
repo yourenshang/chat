@@ -131,4 +131,15 @@ public class WebSocketManager {
         group.writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(message)));
     }
 
+    public void sendSocketMessage(String usernameMd5, SocketMessage msg){
+        if (usernameMd5 == null || "".equals(usernameMd5.trim()) || msg == null){
+            return ;
+        }
+        ChannelGroup group = findChannel(usernameMd5);
+        if (group == null){
+            return ;
+        }
+        group.writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(msg)));
+    }
+
 }
