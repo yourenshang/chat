@@ -9,7 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * <p>
@@ -42,14 +42,14 @@ public class Message extends Model<Message> {
 
     private String message;
 
-    private LocalDateTime sendTime;
+    private Date sendTime;
 
     /**
      * 0 正常
      */
     private Integer status;
 
-    private LocalDateTime createdAt;
+    private Date createdAt;
 
     /**
      * 1 文本消息  2 url消息
