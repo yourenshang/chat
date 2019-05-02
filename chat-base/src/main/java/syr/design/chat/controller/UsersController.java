@@ -3,9 +3,12 @@ package syr.design.chat.controller;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import syr.design.chat.enums.EnumResultCode;
+import syr.design.chat.enums.EnumWebSocketMessageType;
+import syr.design.chat.message.RabbitPub;
 import syr.design.chat.model.Result;
 import syr.design.chat.model.Users;
 import syr.design.chat.service.IUsersService;
+import syr.design.chat.utils.GenUtils;
 import syr.design.chat.utils.JJWTUtil;
 import syr.design.chat.utils.RedisUtil;
 import syr.design.chat.utils.StringUtils;
@@ -34,6 +37,9 @@ public class UsersController extends BaseController {
     @Resource
     private RedisUtil redisUtil;
 
+    @Resource
+    private RabbitPub rabbitPub;
+
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public Result login(@RequestParam("username") String username,
                         @RequestParam("password") String password){
@@ -61,6 +67,11 @@ public class UsersController extends BaseController {
         users.setPassword(StringUtils.md5hash(password));
         this.usersService.save(users);
         return result(EnumResultCode.SUCCESS);
+    }
+
+    @GetMapping(value = "ajax", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Result ajax(){
+        return result(GenUtils.getSockenMessage("xitong", 0L, "123", EnumWebSocketMessageType.dispay.value(), "shangyouren", null));
     }
 
 }
