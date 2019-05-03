@@ -1,15 +1,14 @@
 package syr.design.chat.controller;
 
-
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import syr.design.chat.enums.EnumFriendStatus;
 import syr.design.chat.enums.EnumResultCode;
 import syr.design.chat.model.Friend;
 import syr.design.chat.model.Result;
+import syr.design.chat.model.Users;
 import syr.design.chat.service.IFriendService;
 import syr.design.chat.service.IUsersService;
-
 import javax.annotation.Resource;
 
 /**
@@ -36,7 +35,9 @@ public class FriendController extends BaseController {
     @PostMapping(value = "/apply", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     private Result applyFriend(@RequestParam("userId") Long userId,
                                @RequestParam("friendUserId") Long friendUserId) {
-        if (this.usersService.getById(friendUserId) == null) {
+        Users friendUser = this.usersService.getById(friendUserId);
+        Users users = this.usersService.getById(userId);
+        if (friendUser == null) {
             return result(EnumResultCode.FAIL, "没有这个用户呢，您是寂寞了么，不如找我们的陈卓帅哥聊一聊（17640150504）");
         }
         Friend friend = this.friendService.findFriend(userId, friendUserId);
@@ -45,6 +46,8 @@ public class FriendController extends BaseController {
             friend.setFromUserId(userId);
             friend.setToUserId(friendUserId);
             friend.setStatus(EnumFriendStatus.apply.value());
+            friend.setFromUserName(users.getUsername());
+            friend.setToUserName(friendUser.getUsername());
             this.friendService.save(friend);
             return result(EnumResultCode.SUCCESS);
         } else {

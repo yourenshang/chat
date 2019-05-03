@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>聊天室</title>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"/>
+    <script>
+    </script>
+</head>
+
+<script>
+    let host = 'http://localhost:8000';
+
+    let websocket_host = 'ws://localhost:9006/syr_websocket';
+
+    let token = sessionStorage.getItem('token');
+
+    let username = sessionStorage.getItem('username');
+
+    let chat_type; //1 发送给个人 2 发送给群组
+
+    let to_id;
+
+    let toUserName;
+
+    let websocket = null;
+
+    function get(url, params, fun) {
+        $.ajax({
+            type: 'GET',
+            headers: {
+                'token': token
+            },
+            data: params,
+            url: host + url,
+            success: function(data) {
+                fun(data);
+            },
+            error: function(err) {
+                load();
+            }
+        });
+    }
+
+    function post(url, params, fun) {
+        $.ajax({
+            type: 'post',
+            headers: {
+                'token': token
+            },
+            url: host + url,
+            data: params,
+            success: function(data) {
+                fun(data)
+            },
+            error: function(err) {
+               load();
+            }
+        });
+    }
+
+</script>
+
+<script>
+    load();
+
+    function load() {
+        get('/users/ajax', null, function (data) {
+            if (data.code === 2) {
+                document.getElementById('login').style.display = 'inline';
+                document.getElementById('index').style.display = 'none';
+            } else {
+                document.getElementById('login').style.display = 'none';
+                document.getElementById('index').style.display = 'inline';
+                web_socket_load();
+                tag_message();
+            }
+        });
+    }
+
+    function submit_form() {
+        let login_username = $("input#username").val();
+        let password = $("input#password").val();
+        post('/users/login', {username : login_username, password : password}, function (data) {
+            if (data.code === 0){
+                token = data.info;
+                username = login_username;
+                sessionStorage.setItem('username', username);
+                sessionStorage.setItem('token', token);
+                load();
+            }
+        })
+    }
+
+    function submit_register() {
+        let register_username = $("input#username_register").val();
+        let register_password = $("input#password_register").val();
+        post('/users/register', {username : register_username, password : register_password}, function (data) {
+            if (data.code === 0){
+                document.getElementById('register').style.display='none';
+                load();
+            }else {
+                alert(data.message);
+            }
+        })
+    }
+
+    function tag_logout() {
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('username');
+        token = '213';
+        username = '123';
+        document.getElementById('login').style.display='none';
+        document.getElementById('index').style.display='none';
+        load();
+    }
+
+    function register() {
+        document.getElementById('login').style.display='none';
+        document.getElementById('index').style.display='none';
+        document.getElementById('register').style.display='inline';
+    }
+</script>
+
+<body style="font-family: Monaco,serif; ">
+
+<!--注册界面-->
+<div id="register" style="display: none;">
+    <div>
+        <input type="text" id="username_register"/>
+        <input type="text" id="password_register"/>
+        <button onclick="submit_register()">注册</button>
+    </div>
+</div>
+
+<!--登陆界面-->
+<div id="login" style="display: none;">
+    <div>
+        <input type="text" id="username"/>
+        <input type="password" id="password"/>
+        <button onclick="submit_form()">登陆</button>
+        <button onclick="register()">注册</button>
+    </div>
+</div>
+
+
+<!--index界面-->
+<div id="index" style="display: none;">
+    <p id="title" style="text-align: center">
+        title shangyouren`chat
+    </p>
+    <div id="tag" style="width: 30%; height: 100%; float: left;">
+        left
+        <div id="tag_message" onclick="tag_message()">消息</div>
+        <div id="tag_friend" onclick="tag_friend()">朋友</div>
+        <div id="tag_group" onclick="tag_group()">群组</div>
+        <div id="tag_apply_friend" onclick="tag_apply_friend()">申请</div>
+        <div id="tag_search_friend" onclick="tag_search_friend()">搜索朋友</div>
+        <div id="tag_logout" onclick="tag_logout()">退出</div>
+    </div>
+    <div id="body">
+        right
+        <div id="body_friend" style="display: none;">
+            朋友们
+            <div>syr</div>
+        </div>
+        <div id="body_group" style="display: none;">
+            群组
+            <div>syr的sb friends</div>
+        </div>
+        <div id="body_apply_friend" style="display: none;">
+            好友申请
+            <div>nxs申请加好友</div>
+        </div>
+        <div id="body_message" style="display: inline">
+            消息
+        </div>
+        <div id="body_search_friend">
+            <input type="text" id="search_friend_text"/>
+            <button onclick="search_friend()">搜索</button>
+            <div id="search_friend_result"></div>
+        </div>
+        <div id="body_chat" style="display: none">
+            <div>nihao</div>
+        </div>
+        <div id="body_send" style="display: none">
+            <input type="text" id="send_message"/>
+            <button id="send" onclick="send_websocket()">发送</button>
+        </div>
+    </div>
+</div>
+
+
+</body>
+
+<script>
+
+    function search_friend() {
+        let keywords = $("input#search_friend_text").val();
+        if (keywords === ''){
+
+        }else {
+            post('/users/search', {keywords: keywords}, function (data) {
+                document.getElementById('search_friend_result').innerHTML = '结果';
+                if (data.code === 0){
+                    for (let i = 0; i < data.info.length; i++) {
+                        document.getElementById('search_friend_result').innerHTML +=
+                            '<div id="' + data.info[i].username +'" onclick="apply_friend(this)">' +
+                            '<div>' + data.info[i].username + '</div>' +
+                            '<div id="' + data.info[i].username + 'id' + '" style="display: none">' + data.info[i].id + '</div>' +
+                            '</div>';
+                    }
+                }
+            })
+        }
+    }
+
+    function apply_friend(obj) {
+        let friendUserId = document.getElementById(obj.id+'id').innerText;
+        post('/friend/apply', {friendUserId: friendUserId}, function (data) {
+            if (data.code === 0){
+                tag_search_friend();
+            }else {
+                alert(data.message);
+            }
+        })
+    }
+
+    function tag_search_friend() {
+        tag_search_friend_display();
+    }
+
+    function tag_apply_friend() {
+        tag_apply_display_friend();
+        get('/friend/list', {status: 0}, function (data) {
+            document.getElementById('body_apply_friend').innerHTML = '好友申请';
+            if (data.code === 0){
+                for (let i = 0; i < data.info.length; i++) {
+                    let display_name;
+                    let display_id;
+                    if (data.info[i].fromUserName === username){
+                        display_name = data.info[i].toUserName;
+                        display_id = data.info[i].toUserId;
+                    }else {
+                        display_name = data.info[i].fromUserName;
+                        display_id = data.info[i].fromUserId;
+                    }
+                    document.getElementById('body_apply_friend').innerHTML +=
+                        '<div id="'+ display_name +'" onclick="agree_friend(this)">' +
+                        '<div>' + display_name + '</div>' +
+                        '<div id="' + display_name + 'id' + '" style="display: none">'+ display_id +'</div>' +
+                        '</div>';
+                }
+            }
+        });
+    }
+
+    function agree_friend(obj) {
+        let friendUserId = document.getElementById(obj.id + 'id').innerHTML;
+        post('/friend/agree', {fromUserId: friendUserId}, function (data) {
+            if (data.code === 0){
+                alert("添加成功，恭喜你们遇到了彼此");
+                tag_apply_friend();
+                tag_
+            }else {
+                alert(data.message);
+            }
+        })
+    }
+
+    function tag_message() {
+        get('/message/messageInfo', null, function (data) {
+            tag_message_display();
+            if (data.code === 0){
+                document.getElementById('body_message').innerHTML = '消息';
+                for (let i = 0; i < data.info.length; i++){
+                    document.getElementById('body_message').innerHTML +=  '<div onclick="body_message(this)" id="' + data.info[i].name + '"><div>' + data.info[i].name +'</div>' +
+                            '<div id="' + data.info[i].name + 'id' + '" style="display: none"> ' + data.info[i].id + '</div>' + '<div id="' + data.info[i].name + 'type' + '" style="display: none">' + data.info[i].type + '</div>' + '</div>'
+                }
+            }
+        });
+    }
+
+    function body_message(obj) {
+        toUserName = obj.id;
+        chat_type = Number(document.getElementById(obj.id + 'type').innerText);
+        to_id = document.getElementById(obj.id + 'id').innerText;
+        get('/message/message', {type: chat_type, id: to_id}, function (data) {
+            document.getElementById('body_chat').innerHTML = toUserName;
+            body_message_display();
+            for (let i = 0; i < data.info.length; i++){
+                document.getElementById('body_chat').innerHTML += ' <div>' + data.info[i].message + '</div>'
+            }
+        });
+    }
+
+    function tag_friend() {
+        get('/friend/list', {status : 1}, function (data) {
+            tag_friend_display();
+            if (data.code === 0){
+                document.getElementById('body_friend').innerHTML = '朋友们';
+                for (let i = 0; i < data.info.length; i++){
+                    let display_name;
+                    let display_id;
+                    if (data.info[i].fromUserName === username){
+                        display_name = data.info[i].toUserName;
+                        display_id = data.info[i].toUserId;
+                    }else {
+                        display_name = data.info[i].fromUserName;
+                        display_id = data.info[i].fromUserId;
+                    }
+                    document.getElementById('body_friend').innerHTML +=  '<div onclick="body_message(this)" id="' + display_name + '"><div>' + display_name +'</div>' +
+                        '<div id="' + display_name + 'id' + '" style="display: none"> ' + display_id + '</div>' + '<div id="' + display_name + 'type' + '" style="display: none">' + 1 + '</div>' + '</div>'
+                }
+            }
+        });
+    }
+
+    function tag_group() {
+        get('/userGroup/list', {status: 1}, function (data) {
+            tag_group_display();
+            if (data.code === 0){
+                document.getElementById('body_group').innerHTML = '群组';
+                for (let i = 0; i < data.info.length; i++){
+                    document.getElementById('body_group').innerHTML += '<div onclick="body_message(this)" id="' + data.info[i].groupName + '"><div>' + data.info[i].groupName +'</div>' +
+                        '<div id="' + data.info[i].groupName + 'id' + '" style="display: none"> ' + data.info[i].groupId + '</div>' + '<div id="' + data.info[i].groupName + 'type' + '" style="display: none">' + 2 + '</div>' + '</div>'
+                }
+            }
+        });
+    }
+
+    function body_message_display() {
+        document.getElementById('body_friend').style.display='none';
+        document.getElementById('body_group').style.display='none';
+        document.getElementById('body_apply_friend').style.display='none';
+        document.getElementById('body_message').style.display='none';
+        document.getElementById('body_chat').style.display='inline';
+        document.getElementById('body_send').style.display='inline';
+        document.getElementById('body_search_friend').style.display = 'none';
+    }
+
+    function tag_message_display() {
+        document.getElementById('body_friend').style.display='none';
+        document.getElementById('body_group').style.display='none';
+        document.getElementById('body_apply_friend').style.display='none';
+        document.getElementById('body_message').style.display='inline';
+        document.getElementById('body_chat').style.display='none';
+        document.getElementById('body_send').style.display='none';
+        document.getElementById('body_search_friend').style.display = 'none';
+    }
+
+    function tag_friend_display() {
+        document.getElementById('body_friend').style.display='inline';
+        document.getElementById('body_group').style.display='none';
+        document.getElementById('body_apply_friend').style.display='none';
+        document.getElementById('body_message').style.display='none';
+        document.getElementById('body_chat').style.display='none';
+        document.getElementById('body_send').style.display='none';
+        document.getElementById('body_search_friend').style.display = 'none';
+    }
+
+    function tag_group_display() {
+        document.getElementById('body_friend').style.display='none';
+        document.getElementById('body_group').style.display='inline';
+        document.getElementById('body_apply_friend').style.display='none';
+        document.getElementById('body_message').style.display='none';
+        document.getElementById('body_chat').style.display='none';
+        document.getElementById('body_send').style.display='none';
+        document.getElementById('body_search_friend').style.display = 'none';
+    }
+
+    function tag_apply_display_friend() {
+        document.getElementById('body_friend').style.display='none';
+        document.getElementById('body_group').style.display='none';
+        document.getElementById('body_apply_friend').style.display='inline';
+        document.getElementById('body_message').style.display='none';
+        document.getElementById('body_chat').style.display='none';
+        document.getElementById('body_send').style.display='none';
+        document.getElementById('body_search_friend').style.display = 'none';
+    }
+
+    function tag_search_friend_display() {
+        document.getElementById('body_friend').style.display='none';
+        document.getElementById('body_group').style.display='none';
+        document.getElementById('body_apply_friend').style.display='none';
+        document.getElementById('body_message').style.display='none';
+        document.getElementById('body_chat').style.display='none';
+        document.getElementById('body_send').style.display='none';
+        document.getElementById('body_search_friend').style.display = 'inline';
+    }
+
+    function web_socket_load() {
+        if ('WebSocket' in window) {
+            websocket = new WebSocket(websocket_host + "?username=" + username);
+        } else {
+            alert('ERROR:当前浏览器不支持websocket')
+        }
+        websocket.onerror = function() {
+            alert("WebSocket连接发生错误");
+        };
+        websocket.onopen = function() {
+
+        };
+        websocket.onmessage = function(event) {
+            socket_message(event.data);
+
+        };
+        websocket.onclose = function() {
+        };
+        window.onbeforeunload = function() {
+           websocket.close();
+        };
+    }
+
+    function socket_message(json_str) {
+        let data = JSON.parse(json_str);
+        document.getElementById('body_chat').innerHTML += ' <div>' + data.message.message + '</div>'
+    }
+
+    function send_websocket() {
+        let send_str = $('input#send_message').val();
+        if (send_str === ''){
+
+        }else {
+            if (chat_type === 1) {
+                websocket.send(JSON.stringify(new to_user_chat(send_str)));
+            }else {
+                websocket.send(JSON.stringify(new to_group_chat(send_str)));
+            }
+        }
+    }
+
+    function message(toGroupId_p, toGroupName_p, toUserId_p, toUserName_p, type_p, message_str_p){
+        this.toGroupId = toGroupId_p;
+        this.toGroupName = toGroupName_p;
+        this.toUserId = toUserId_p;
+        this.type = type_p;
+        this.message = message_str_p;
+        this.messageType = 1;
+        this.toUserName = toUserName_p;
+    }
+
+    function to_user_chat(message_str) {
+        this.token = token;
+        this.type = 1;
+        this.fromUserName = username;
+        this.message=new message(null, null, to_id, toUserName, chat_type, message_str);
+    }
+
+    function to_group_chat(message_str) {
+        this.token = token;
+        this.type = 1;
+        this.fromUserName = username;
+        this.message = new message(to_id, toUserName, null, null, chat_type, message_str)
+    }
+
+</script>
+</html>

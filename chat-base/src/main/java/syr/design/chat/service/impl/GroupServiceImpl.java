@@ -15,6 +15,7 @@ import syr.design.chat.service.IRoleService;
 import syr.design.chat.service.IUserGroupService;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * <p>
@@ -57,4 +58,5 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, Groups> implement
         }
         return result;
     }
+
 }

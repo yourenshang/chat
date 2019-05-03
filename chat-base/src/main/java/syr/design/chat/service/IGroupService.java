@@ -3,6 +3,8 @@ package syr.design.chat.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import syr.design.chat.model.Groups;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务类
@@ -16,4 +18,5 @@ public interface IGroupService extends IService<Groups> {
     boolean add(Groups group, Long userId);
 
     boolean del(Groups group);
+
 }

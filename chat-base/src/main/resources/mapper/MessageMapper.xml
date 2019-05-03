@@ -18,4 +18,28 @@
         <result column="from_user_name" property="fromUserName"/>
     </resultMap>
 
+    <select id="getMessageByUser" resultMap="BaseResultMap">
+        select * from message
+        where
+        type = #{type}
+        and ((from_user_id = #{userId} and to_user_id = #{friendUserId}) or (to_user_id = #{userId} and from_user_id = #{friendUserId}))
+    </select>
+
+    <select id="getMessageByGroup" resultMap="BaseResultMap">
+        select * from message
+        where
+        type = #{type}
+        and to_group_id = #{groupId}
+    </select>
+
+    <select id="getMessage" resultMap="BaseResultMap">
+        select a.*
+        from message a
+        left join user_group b on a.to_group_id = b.group_id
+        where
+        a.to_user_id = #{userId}
+	    or a.from_user_id = #{userId}
+        or b.user_id = #{userId}
+    </select>
+
 </mapper>

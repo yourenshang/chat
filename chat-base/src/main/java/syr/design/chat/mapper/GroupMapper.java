@@ -1,7 +1,10 @@
 package syr.design.chat.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 import syr.design.chat.model.Groups;
+
+import java.util.List;
 
 /**
  * <p>

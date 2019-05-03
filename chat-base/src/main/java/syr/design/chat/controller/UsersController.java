@@ -1,5 +1,6 @@
 package syr.design.chat.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import syr.design.chat.enums.EnumResultCode;
@@ -69,9 +70,14 @@ public class UsersController extends BaseController {
         return result(EnumResultCode.SUCCESS);
     }
 
-    @GetMapping(value = "ajax", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/ajax", produces = MediaType.APPLICATION_JSON_VALUE)
     public Result ajax(){
-        return result(GenUtils.getSockenMessage("xitong", 0L, "123", EnumWebSocketMessageType.dispay.value(), "shangyouren", null));
+        return result(GenUtils.getSocketMessage("xitong", 0L, "123", EnumWebSocketMessageType.dispay.value(), "shangyouren", null));
+    }
+
+    @PostMapping(value = "/search", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Result search(@RequestParam("keywords") String keywords){
+        return result(this.usersService.list(new LambdaQueryWrapper<Users>().like(Users::getUsername, keywords)));
     }
 
 }

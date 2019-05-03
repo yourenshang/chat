@@ -1,5 +1,8 @@
 package syr.design.chat.enums;
 
+/**
+ * @author shangyouren
+ */
 public enum  EnumWebSocketMessageType {
 
     //前后端交互类型

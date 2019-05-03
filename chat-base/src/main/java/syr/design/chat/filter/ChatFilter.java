@@ -26,7 +26,7 @@ public class ChatFilter implements Filter {
     private RedisUtil redisUtil;
 
     private void sendFailed(ServletResponse servletResponse) throws IOException{
-        servletResponse.setContentType("text/html;charset=utf-8");
+        servletResponse.setContentType("application/json;charset=utf-8");
         Result result = new Result();
         result.setCode(EnumResultCode.FAIL.value());
         result.setMessage("无效令牌");
@@ -43,12 +43,14 @@ public class ChatFilter implements Filter {
         // 响应类型
         response.setHeader("Access-Control-Allow-Methods", "POST, GET, DELETE, OPTIONS, DELETE");
         // 响应头设置
-        response.setHeader("Access-Control-Allow-Headers", "Content-Type, x-requested-with, X-Custom-Header, HaiYi-Access-Token");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type, x-requested-with, X-Custom-Header, HaiYi-Access-Token, token");
         if (HttpMethod.OPTIONS.name().equals(request.getMethod())){
             response.setStatus(HttpStatus.ACCEPTED.value());
-            return ;
         }
         boolean flag = true;
+        if (request.getRequestURI().endsWith("/")){
+            flag = false;
+        }
         for (String alowyUrl : jjwtUtil.getAllowUrls()){
             if (request.getRequestURI().contains(alowyUrl)){
                 flag = false;

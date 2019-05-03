@@ -3,10 +3,7 @@ package syr.design.chat.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import syr.design.chat.enums.EnumResultCode;
 import syr.design.chat.enums.EnumRoleLev;
 import syr.design.chat.enums.EnumUserGroupStatus;
@@ -19,6 +16,7 @@ import syr.design.chat.service.IRoleService;
 import syr.design.chat.service.IUserGroupService;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * <p>
@@ -117,6 +115,17 @@ public class UserGroupController extends BaseController {
         boolean result = this.userGroupService.refund(userGroup, nextOwnerUserId, role.getLev());
         return result(EnumResultCode.SUCCESS);
     }
+
+    /**
+     * 我的群组
+     */
+    @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Result list(@RequestParam("userId") Long userId,
+                       @RequestParam("status") Integer status){
+        return result(this.userGroupService.getGroupByUserId(userId, status));
+
+    }
+
 
 }
 

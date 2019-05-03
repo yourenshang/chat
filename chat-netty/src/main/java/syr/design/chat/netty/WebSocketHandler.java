@@ -17,10 +17,7 @@ import syr.design.chat.model.SocketMessage;
 import syr.design.chat.model.Users;
 import syr.design.chat.service.IUsersService;
 import syr.design.chat.service.IWebSocketFrameService;
-import syr.design.chat.utils.JJWTUtil;
-import syr.design.chat.utils.RedisUtils;
-import syr.design.chat.utils.SpringUtils;
-import syr.design.chat.utils.StringUtils;
+import syr.design.chat.utils.*;
 
 import java.util.List;
 import java.util.Map;
@@ -90,9 +87,10 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<Object> {
             return;
         }
         String text = ((TextWebSocketFrame) frame).text();
+        System.out.println(text);
         ApplicationContext context = SpringUtils.getApplicationContext();
         JJWTUtil jjwtUtil = context.getBean(JJWTUtil.class);
-        SocketMessage socketMessage = JSON.parseObject(text, SocketMessage.class);
+        SocketMessage socketMessage = GenUtils.getSocketMessage(JSON.parseObject(text));
         String token = socketMessage.getToken();
         if (token == null) {
             ctx.close();

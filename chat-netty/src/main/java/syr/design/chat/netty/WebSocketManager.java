@@ -91,6 +91,7 @@ public class WebSocketManager {
             return;
         }
         group.writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(socketMessage)));
+        System.out.println("[socket message]" + JSON.toJSONString(message));
     }
 
     public void sendMessageToGroup(List<Users> toUsers, Users fromUsers, Message message) {
@@ -108,10 +109,6 @@ public class WebSocketManager {
             if (group != null) {
                 group.writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(socketMessage)));
             }
-        }
-        group = findChannel(StringUtils.getNettyTag(fromUsers));
-        if (group != null) {
-            group.writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(socketMessage)));
         }
     }
 

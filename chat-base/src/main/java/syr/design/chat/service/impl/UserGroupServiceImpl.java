@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import syr.design.chat.enums.EnumRoleLev;
 import syr.design.chat.mapper.UserGroupMapper;
+import syr.design.chat.model.Groups;
 import syr.design.chat.model.Role;
 import syr.design.chat.model.UserGroup;
 import syr.design.chat.service.IGroupService;
@@ -67,5 +68,10 @@ public class UserGroupServiceImpl extends ServiceImpl<UserGroupMapper, UserGroup
             }
         }
         return result;
+    }
+
+    @Override
+    public List<Groups> getGroupByUserId(Long userId, Integer status) {
+        return this.baseMapper.getGroupByUserId(userId, status);
     }
 }

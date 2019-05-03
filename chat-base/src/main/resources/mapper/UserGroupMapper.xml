@@ -10,6 +10,7 @@
         <result column="role_id" property="roleId" />
         <result column="status" property="status" />
         <result column="created_at" property="createdAt" />
+        <result column="group_name" property="groupName"/>
     </resultMap>
 
     <select id="findByGroupId" resultMap="BaseResultMap">
@@ -18,6 +19,15 @@
         left join role b on a.role_id = b.id
         where a.group_id = #{groupId}
         order by b.lev
+    </select>
+
+    <select id="getGroupByUserId" resultMap="BaseResultMap">
+        select a.*, b.group_name
+        from user_group a
+        left join groups b on a.group_id = b.id
+        where
+        a.user_id = #{userId}
+        and a.status = #{status}
     </select>
 
 </mapper>

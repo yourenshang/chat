@@ -3,10 +3,7 @@ package syr.design.chat.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import syr.design.chat.enums.EnumResultCode;
 import syr.design.chat.enums.EnumRoleLev;
 import syr.design.chat.enums.EnumUserGroupStatus;
@@ -19,6 +16,7 @@ import syr.design.chat.service.IRoleService;
 import syr.design.chat.service.IUserGroupService;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * <p>
@@ -114,6 +112,5 @@ public class GroupController extends BaseController{
         this.groupService.updateById(group);
         return result(EnumResultCode.SUCCESS);
     }
-
 }
 

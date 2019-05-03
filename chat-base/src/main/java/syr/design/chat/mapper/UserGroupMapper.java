@@ -1,6 +1,8 @@
 package syr.design.chat.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+import syr.design.chat.model.Groups;
 import syr.design.chat.model.UserGroup;
 
 import java.util.List;
@@ -16,4 +18,7 @@ import java.util.List;
 public interface UserGroupMapper extends BaseMapper<UserGroup> {
 
     List<UserGroup> findByGroupId(Long groupId);
+
+    //查找groups
+    List<Groups> getGroupByUserId(@Param("userId") Long userId, @Param("status") Integer status);
 }
