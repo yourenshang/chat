@@ -66,7 +66,7 @@
 
     function load() {
         get('/users/ajax', null, function (data) {
-            if (data.code === 2) {
+            if (datdata.info[i].usernamea.code === 2) {
                 document.getElementById('login').style.display = 'inline';
                 document.getElementById('index').style.display = 'none';
             } else {
@@ -112,6 +112,7 @@
         username = '123';
         document.getElementById('login').style.display='none';
         document.getElementById('index').style.display='none';
+        websocket.close();
         load();
     }
 
