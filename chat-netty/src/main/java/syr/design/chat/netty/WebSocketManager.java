@@ -85,7 +85,7 @@ public class WebSocketManager {
         if (group == null) {
             return;
         }
-        group.writeAndFlush(JSON.toJSONString(socketMessage));
+        group.writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(socketMessage)));
         group = findChannel(StringUtils.getNettyTag(users));
         if (group == null) {
             return;
