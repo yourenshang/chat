@@ -16,5 +16,5 @@ import java.util.List;
  */
 public interface NettyUsersMapper extends BaseMapper<Users> {
 
-    List<Users> findByGroupId(@Param("toGroupId") Long toGroupId);
+    List<Users> findByGroupId(@Param("toGroupId") Long toGroupId, @Param("status") Integer status);
 }

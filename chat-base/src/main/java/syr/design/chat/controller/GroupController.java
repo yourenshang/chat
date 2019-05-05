@@ -112,5 +112,13 @@ public class GroupController extends BaseController{
         this.groupService.updateById(group);
         return result(EnumResultCode.SUCCESS);
     }
+
+    /**
+     * 搜索群组
+     */
+    @PostMapping(value = "/search", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Result search(@RequestParam("keywords") String keywords){
+        return result(this.groupService.list(new LambdaQueryWrapper<Groups>().like(Groups::getGroupName, keywords)));
+    }
 }
 

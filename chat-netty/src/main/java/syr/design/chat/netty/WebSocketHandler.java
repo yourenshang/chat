@@ -109,6 +109,7 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<Object> {
         }
         boolean result = false;
         if (socketMessage.getType().equals(EnumWebSocketMessageType.message.value())) {
+            socketMessage.getMessage().setFromUserId(Long.valueOf(userId));
             result = context.getBean(IWebSocketFrameService.class).sendMessage(Long.valueOf(userId), socketMessage.getMessage());
         }
         if (!result) {

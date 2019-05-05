@@ -233,6 +233,12 @@
                 <tr  onclick="tag_search_group()">
                     <th><div id="tag_search_group" style="text-align: center">搜索群组</div></th>
                 </tr>
+                <tr  onclick="tag_create_group()">
+                    <th><div id="tag_create_group" style="text-align: center">创建群组</div></th>
+                </tr>
+                <tr  onclick="tag_apply_group()">
+                    <th><div id="tag_apply_group" style="text-align: center">管理群组</div></th>
+                </tr>
                 <tr  onclick="tag_logout()">
                     <th><div id="tag_logout" style="text-align: center">退出</div></th>
                 </tr>
@@ -280,6 +286,9 @@
             </div>
             <div id="search_group_result"></div>
         </div>
+        <div id="body_apply_group" style="display: inline">
+            <div style="text-align: center">right 群组申请，等待审批</div>
+        </div>
     </div>
 
 
@@ -290,13 +299,80 @@
 
 <script>
 
+    function tag_apply_group() {
+        tag_apply_group_display();
+        get('/userGroup/agreeList', null, function (data) {
+            document.getElementById('body_apply_group').innerHTML = '<div style="text-align: center">right 群组申请，等待审批</div>';
+            if (data.code === 0){
+                for (let i = 0; i < data.info.length; i++){
+                    document.getElementById('body_apply_group').innerHTML += '' +
+                        '<div id="' + data.info[i].id + '" onclick="agree_user_group(this)" class="result">' + data.info[i].username + '申请加入' + data.info[i].groupName + '</div>';
+                }
+            }else {
+                alert(data.message);
+            }
+        })
+    }
+    
+    function agree_user_group(obj) {
+        post('/userGroup/agree', {userGroupId: obj.id}, function (data) {
+            if (data.code === 0){
+                alert('已经同意，恭喜你们找到了新的伙伴');
+                tag_apply_group();
+            }else {
+                alert(data.message);
+            }
+        });
+    }
+    
+    function tag_create_group() {
+        let groupName = prompt("请输入群组名");
+        if (null === groupName || groupName === ''){
+
+        }else {
+            post('/group/create', {groupName: groupName}, function (data) {
+                if (data.code === 0){
+                    alert('创建群组' + groupName + '成功');
+                }else {
+                    alert(code.message);
+                }
+            });
+        }
+    }
+
     function tag_search_group() {
+        tag_search_group_display();
+    }
+
+    function search_group() {
         let keywords = $("input#search_group_text").val();
         if (keywords === ''){
 
         }else {
-            
+            post('/group/search', {keywords: keywords}, function (data) {
+                document.getElementById('search_group_result').innerHTML = '<div style="margin-top: 20px; width: 100%; text-align: center;">结果</div>';
+               if (data.code === 0){
+                   for (let i = 0; i < data.info.length; i++) {
+                       document.getElementById('search_group_result').innerHTML +=
+                           '<div id="' + data.info[i].groupName + '" onclick="apply_group(this)" class="result">' +
+                           '<div>' + data.info[i].groupName + '</div>' +
+                           '<div id="' + data.info[i].groupName + 'id' + '" style="display: none">' + data.info[i].id + '</div>' +
+                           '</div>';
+                   }
+               }
+            });
         }
+    }
+
+    function apply_group(obj) {
+        let groupId = document.getElementById(obj.id + 'id').innerText;
+        post('/userGroup/apply', {groupId: groupId}, function (data) {
+            if (data.code === 0){
+                alert('申请加群成功，剩下的只能看群组管理员靠不靠谱了');
+            }else {
+                alert(data.message);
+            }
+        })
     }
 
     function search_friend() {
@@ -366,7 +442,6 @@
             if (data.code === 0){
                 alert("添加成功，恭喜你们遇到了彼此");
                 tag_apply_friend();
-                tag_
             }else {
                 alert(data.message);
             }
@@ -447,6 +522,7 @@
         document.getElementById('body_send').style.display='inline';
         document.getElementById('body_search_friend').style.display = 'none';
         document.getElementById('body_search_group').style.display='none';
+        document.getElementById('body_apply_group').style.display='none';
     }
 
     function tag_message_display() {
@@ -458,6 +534,7 @@
         document.getElementById('body_send').style.display='none';
         document.getElementById('body_search_friend').style.display = 'none';
         document.getElementById('body_search_group').style.display='none';
+        document.getElementById('body_apply_group').style.display='none';
     }
 
     function tag_friend_display() {
@@ -469,6 +546,7 @@
         document.getElementById('body_send').style.display='none';
         document.getElementById('body_search_friend').style.display = 'none';
         document.getElementById('body_search_group').style.display='none';
+        document.getElementById('body_apply_group').style.display='none';
     }
 
     function tag_group_display() {
@@ -480,6 +558,7 @@
         document.getElementById('body_send').style.display='none';
         document.getElementById('body_search_friend').style.display = 'none';
         document.getElementById('body_search_group').style.display='none';
+        document.getElementById('body_apply_group').style.display='none';
     }
 
     function tag_apply_display_friend() {
@@ -491,6 +570,7 @@
         document.getElementById('body_send').style.display='none';
         document.getElementById('body_search_friend').style.display = 'none';
         document.getElementById('body_search_group').style.display='none';
+        document.getElementById('body_apply_group').style.display='none';
     }
 
     function tag_search_friend_display() {
@@ -502,9 +582,10 @@
         document.getElementById('body_send').style.display='none';
         document.getElementById('body_search_friend').style.display = 'inline';
         document.getElementById('body_search_group').style.display='none';
+        document.getElementById('body_apply_group').style.display='none';
     }
 
-    function tag_search_friend_display() {
+    function tag_search_group_display() {
         document.getElementById('body_friend').style.display='none';
         document.getElementById('body_group').style.display='none';
         document.getElementById('body_apply_friend').style.display='none';
@@ -513,6 +594,19 @@
         document.getElementById('body_send').style.display='none';
         document.getElementById('body_search_friend').style.display = 'none';
         document.getElementById('body_search_group').style.display='inline';
+        document.getElementById('body_apply_group').style.display='none';
+    }
+
+    function tag_apply_group_display() {
+        document.getElementById('body_friend').style.display='none';
+        document.getElementById('body_group').style.display='none';
+        document.getElementById('body_apply_friend').style.display='none';
+        document.getElementById('body_message').style.display='none';
+        document.getElementById('body_chat').style.display='none';
+        document.getElementById('body_send').style.display='none';
+        document.getElementById('body_search_friend').style.display = 'none';
+        document.getElementById('body_search_group').style.display='none';
+        document.getElementById('body_apply_group').style.display='inline';
     }
 
     function web_socket_load() {
@@ -540,10 +634,14 @@
 
     function socket_message(json_str) {
         let data = JSON.parse(json_str);
-        if (data.message.fromUserName === username){
-            document.getElementById('body_chat').innerHTML += '<div class="my_message">' + data.message.message + '</div>'
+        if (data.type === 1) {
+            if (data.message.fromUserName === username) {
+                document.getElementById('body_chat').innerHTML += '<div class="my_message">' + data.message.message + '</div>'
+            } else {
+                document.getElementById('body_chat').innerHTML += '<div class="other_message">' + data.message.message + '</div>'
+            }
         }else {
-            document.getElementById('body_chat').innerHTML += '<div class="other_message">' +  data.message.message + '</div>'
+            alert(data.msg);
         }
     }
 

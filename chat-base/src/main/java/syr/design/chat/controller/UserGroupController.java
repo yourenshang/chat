@@ -50,7 +50,7 @@ public class UserGroupController extends BaseController {
             return result(EnumResultCode.FAIL, "这不会是个鬼群吧，我怎么找不着她->_->");
         }
         UserGroup userGroup = this.userGroupService.getOne(new LambdaQueryWrapper<UserGroup>()
-                .eq(UserGroup::getGroupId, group)
+                .eq(UserGroup::getGroupId, group.getId())
                 .eq(UserGroup::getUserId, userId));
         if (userGroup != null){
             if (userGroup.getStatus().equals(EnumUserGroupStatus.apply.value())){
@@ -124,6 +124,15 @@ public class UserGroupController extends BaseController {
                        @RequestParam("status") Integer status){
         return result(this.userGroupService.getGroupByUserId(userId, status));
 
+    }
+
+
+    /**
+     * 申请加群列表
+     */
+    @GetMapping(value = "/agreeList", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Result list(@RequestParam("userId") Long userId){
+        return result(this.userGroupService.findWaitAgree(userId));
     }
 
 

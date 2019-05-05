@@ -52,6 +52,9 @@ public class UserGroup extends Model<UserGroup> {
     @TableField(exist = false)
     private String groupName;
 
+    @TableField(exist = false)
+    private String username;
+
 
     @Override
     protected Serializable pkVal() {

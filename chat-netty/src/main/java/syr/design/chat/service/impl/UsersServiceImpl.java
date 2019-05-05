@@ -3,6 +3,7 @@ package syr.design.chat.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import syr.design.chat.enums.EnumUserGroupStatus;
 import syr.design.chat.mapper.NettyUsersMapper;
 import syr.design.chat.model.Users;
 import syr.design.chat.service.IUsersService;
@@ -28,6 +29,6 @@ public class UsersServiceImpl extends ServiceImpl<NettyUsersMapper, Users> imple
 
     @Override
     public List<Users> findByGroupId(Long toGroupId) {
-        return this.baseMapper.findByGroupId(toGroupId);
+        return this.baseMapper.findByGroupId(toGroupId, EnumUserGroupStatus.agree.value());
     }
 }

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import syr.design.chat.enums.EnumRoleLev;
+import syr.design.chat.enums.EnumUserGroupStatus;
 import syr.design.chat.mapper.UserGroupMapper;
 import syr.design.chat.model.Groups;
 import syr.design.chat.model.Role;
@@ -73,5 +74,10 @@ public class UserGroupServiceImpl extends ServiceImpl<UserGroupMapper, UserGroup
     @Override
     public List<Groups> getGroupByUserId(Long userId, Integer status) {
         return this.baseMapper.getGroupByUserId(userId, status);
+    }
+
+    @Override
+    public List<UserGroup> findWaitAgree(Long userId) {
+        return this.baseMapper.findWaitAgree(userId, EnumRoleLev.manager.value(), EnumUserGroupStatus.apply.value());
     }
 }

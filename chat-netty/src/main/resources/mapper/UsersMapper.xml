@@ -19,6 +19,7 @@
         left join user_group b on a.id = b.user_id
         where
             b.group_id = #{toGroupId}
+            and b.status = #{status}
     </select>
 
 </mapper>

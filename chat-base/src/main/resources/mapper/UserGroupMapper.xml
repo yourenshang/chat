@@ -11,6 +11,7 @@
         <result column="status" property="status" />
         <result column="created_at" property="createdAt" />
         <result column="group_name" property="groupName"/>
+        <result column="username" property="username"/>
     </resultMap>
 
     <select id="findByGroupId" resultMap="BaseResultMap">
@@ -27,6 +28,19 @@
         left join groups b on a.group_id = b.id
         where
         a.user_id = #{userId}
+        and a.status = #{status}
+    </select>
+
+    <select id="findWaitAgree" resultMap="BaseResultMap">
+        select a.*, d.username as username, e.group_name as group_name
+        from user_group a
+        left join user_group b on a.group_id = b.group_id
+        left join role c on b.role_id = c.id
+        left join users d on a.user_id = d.id
+        left join groups e on a.group_id = e.id
+        where
+        b.user_id = #{userId}
+        and c.lev &lt;= #{lev}
         and a.status = #{status}
     </select>
 
