@@ -129,12 +129,21 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<Object> {
         String uri = request.getUri();
         QueryStringDecoder queryStringDecoder = new QueryStringDecoder(uri);
         Map<String, List<String>> parameters = queryStringDecoder.parameters();
-        List<String> usernames = parameters.get("username");
-        String username = usernames.get(0);
+        List<String> tokens = parameters.get("token");
+        String token = tokens.get(0);
+        if (token == null){
+            return;
+        }
         ApplicationContext context = SpringUtils.getApplicationContext();
         //验证用户权限
         IUsersService usersService = context.getBean(IUsersService.class);
-        Users users = usersService.selectByUserName(username);
+        JJWTUtil jjwtUtil = context.getBean(JJWTUtil.class);
+        Map<String, Object> tokenMap = jjwtUtil.checkToken(token);
+        if (tokenMap == null){
+            return ;
+        }
+        String userId = (String) tokenMap.get("userId");
+        Users users = usersService.getById(Long.valueOf(userId));
         if (users == null) {
             return;
         }

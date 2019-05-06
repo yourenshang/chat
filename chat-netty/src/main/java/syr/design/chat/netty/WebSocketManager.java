@@ -16,6 +16,9 @@ import syr.design.chat.utils.StringUtils;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
+/**
+ * @author shangyouren
+ */
 @Component
 public class WebSocketManager {
 

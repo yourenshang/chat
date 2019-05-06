@@ -72,7 +72,7 @@ public class UsersController extends BaseController {
 
     @GetMapping(value = "/ajax", produces = MediaType.APPLICATION_JSON_VALUE)
     public Result ajax(){
-        return result(GenUtils.getSocketMessage("xitong", 0L, "123", EnumWebSocketMessageType.dispay.value(), "shangyouren", null));
+        return result(EnumResultCode.SUCCESS);
     }
 
     @PostMapping(value = "/search", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

@@ -18,14 +18,23 @@
             color: #005cbf;
         }
         .my_message{
-            width: 100%;
-            text-align: right;
             height: 30px;
+            float: right;
+
         }
         .other_message{
-            width: 100%;
-            text-align: left;
             height: 30px;
+            float: left;
+        }
+        .content{
+            background: rgba(255, 255, 255, 0.85);
+            padding: 10px;
+            border-radius: 10px;
+            margin: 6px 10px 0 10px;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 3px #ccc;
+            width: 60%;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -129,7 +138,7 @@
     }
 
     function title_style() {
-        document.getElementById('title').innerHTML = 'title ' + username + '`chat';
+        document.getElementById('title').innerHTML = '<h3 class="panel-body" style="text-align: center">title ' + username + '`word</h3>';
     }
 
     function tag_logout() {
@@ -208,9 +217,9 @@
 
 <!--index界面-->
 <div id="index" style="display: none;">
-    <p id="title" style="text-align: center; margin-top: 20px;">
-        title shangyouren`chat
-    </p>
+    <div class="panel panel-default" id="title">
+        <h3 class="panel-body" style="text-align: center">title shangyouren`word</h3>
+    </div>
     <div id="tag" style="width: 15%; height: 100%; float: left; margin-left: 20px; margin-top: 10px">
         <table class="table table-striped table-bordered">
             <thead><th style="text-align: center">left</th></thead>
@@ -248,47 +257,47 @@
 
 
     <div id="body" style="margin-top: 10px; margin-left: 10px; float: left; width: 70%">
-        <div id="body_friend" style="display: none;">
-            <div style="text-align: center">right 朋友们</div>
-        </div>
-        <div id="body_group" style="display: none;">
-            <div style="text-align: center">right 群组</div>
-        </div>
-        <div id="body_apply_friend" style="display: none;">
-            <div style="text-align: center">right 好友申请</div>
-        </div>
-        <div id="body_message" style="display: inline">
-            <div style="text-align: center">right 消息</div>
-        </div>
-        <div id="body_search_friend">
-            <div style="text-align: center">right 搜索朋友</div>
+        <ul id="body_friend" style="display: none;" class="list-group">
+            <li style="text-align: center" class="list-group-item">right 朋友们</li>
+        </ul>
+        <ul id="body_group" style="display: none;" class="list-group">
+            <li style="text-align: center" class="list-group-item">right 群组</li>
+        </ul>
+        <ul id="body_apply_friend" style="display: none;" class="list-group">
+            <li style="text-align: center" class="list-group-item">right 好友申请</li>
+        </ul>
+        <ul id="body_message" style="display: inline" class="list-group">
+            <li style="text-align: center" class="list-group-item">right 消息</li>
+        </ul>
+        <ul id="body_search_friend" class="list-group">
+            <li style="text-align: center" class="list-group-item">right 搜索朋友</li>
             <div>
-                <div style="float: right">
+                <div style="float: right; margin-top: 10px">
                     <input type="text" id="search_friend_text"/>
                     <button onclick="search_friend()">搜索</button>
                 </div>
             </div>
             <div id="search_friend_result"></div>
-        </div>
+        </ul>
         <div id="body_chat" style="display: none">
         </div>
-        <div id="body_send" style="display: none">
-            <input type="text" id="send_message"/>
-            <button id="send" onclick="send_websocket()">发送</button>
+        <div id="body_send" style="display: none; width: 100%; margin-bottom: 20px">
+            <input type="text" id="send_message" style="width: 80%;"/>
+            <button id="send" onclick="send_websocket()" style="width: 15%;">发送</button>
         </div>
-        <div id="body_search_group">
-            <div style="text-align: center">right 搜索群组</div>
+        <ul id="body_search_group" class="list-group">
+            <li style="text-align: center" class="list-group-item">right 搜索群组</li>
             <div>
-                <div style="float: right">
+                <div style="float: right; margin-top: 10px">
                     <input type="text" id="search_group_text"/>
                     <button onclick="search_group()">搜索</button>
                 </div>
             </div>
             <div id="search_group_result"></div>
-        </div>
-        <div id="body_apply_group" style="display: inline">
-            <div style="text-align: center">right 群组申请，等待审批</div>
-        </div>
+        </ul>
+        <ul id="body_apply_group" style="display: inline" class="list-group">
+            <li style="text-align: center" class="list-group-item">right 群组申请，等待审批</li>
+        </ul>
     </div>
 
 
@@ -302,18 +311,18 @@
     function tag_apply_group() {
         tag_apply_group_display();
         get('/userGroup/agreeList', null, function (data) {
-            document.getElementById('body_apply_group').innerHTML = '<div style="text-align: center">right 群组申请，等待审批</div>';
+            document.getElementById('body_apply_group').innerHTML = '<li style="text-align: center" class="list-group-item">right 群组申请，等待审批</li>';
             if (data.code === 0){
                 for (let i = 0; i < data.info.length; i++){
                     document.getElementById('body_apply_group').innerHTML += '' +
-                        '<div id="' + data.info[i].id + '" onclick="agree_user_group(this)" class="result">' + data.info[i].username + '申请加入' + data.info[i].groupName + '</div>';
+                        '<li id="' + data.info[i].id + '" onclick="agree_user_group(this)" class="result list-group-item">' + data.info[i].username + '申请加入' + data.info[i].groupName + '</li>';
                 }
             }else {
                 alert(data.message);
             }
         })
     }
-    
+
     function agree_user_group(obj) {
         post('/userGroup/agree', {userGroupId: obj.id}, function (data) {
             if (data.code === 0){
@@ -324,7 +333,7 @@
             }
         });
     }
-    
+
     function tag_create_group() {
         let groupName = prompt("请输入群组名");
         if (null === groupName || groupName === ''){
@@ -414,7 +423,7 @@
     function tag_apply_friend() {
         tag_apply_display_friend();
         get('/friend/list', {status: 0}, function (data) {
-            document.getElementById('body_apply_friend').innerHTML = ' <div style="text-align: center">right 好友申请</div>';
+            document.getElementById('body_apply_friend').innerHTML = ' <li style="text-align: center" class="list-group-item">right 好友申请</li>';
             if (data.code === 0){
                 for (let i = 0; i < data.info.length; i++) {
                     let display_name;
@@ -427,10 +436,10 @@
                         display_id = data.info[i].fromUserId;
                     }
                     document.getElementById('body_apply_friend').innerHTML +=
-                        '<div id="'+ display_name +'" onclick="agree_friend(this)" class="result">' +
+                        '<li id="'+ display_name +'" onclick="agree_friend(this)" class="result list-group-item">' +
                         '<div>' + display_name + '</div>' +
                         '<div id="' + display_name + 'id' + '" style="display: none">'+ display_id +'</div>' +
-                        '</div>';
+                        '</li>';
                 }
             }
         });
@@ -452,10 +461,10 @@
         get('/message/messageInfo', null, function (data) {
             tag_message_display();
             if (data.code === 0){
-                document.getElementById('body_message').innerHTML = '<div style="text-align: center">right 消息</div>';
+                document.getElementById('body_message').innerHTML = '<li style="text-align: center" class="list-group-item">right 消息</li>';
                 for (let i = 0; i < data.info.length; i++){
-                    document.getElementById('body_message').innerHTML +=  '<div onclick="body_message(this)" id="' + data.info[i].name + '" class="result"><div>' + data.info[i].name +'</div>' +
-                            '<div id="' + data.info[i].name + 'id' + '" style="display: none"> ' + data.info[i].id + '</div>' + '<div id="' + data.info[i].name + 'type' + '" style="display: none">' + data.info[i].type + '</div>' + '</div>'
+                    document.getElementById('body_message').innerHTML +=  '<li onclick="body_message(this)" id="' + data.info[i].name + '" class="result list-group-item"><div>' + data.info[i].name +'</div>' +
+                            '<div id="' + data.info[i].name + 'id' + '" style="display: none"> ' + data.info[i].id + '</div>' + '<div id="' + data.info[i].name + 'type' + '" style="display: none">' + data.info[i].type + '</div>' + '</li>'
                 }
             }
         });
@@ -466,13 +475,13 @@
         chat_type = Number(document.getElementById(obj.id + 'type').innerText);
         to_id = document.getElementById(obj.id + 'id').innerText;
         get('/message/message', {type: chat_type, id: to_id}, function (data) {
-            document.getElementById('body_chat').innerHTML = '<div style="text-align: center">right '+ toUserName +'</div>';
+            document.getElementById('body_chat').innerHTML = '<ul style="text-align: center; margin-bottom: 10px" class="list-group-item">right '+ toUserName +'</ul><div style="margin-left: 5%; width: 90%" id="body_chat_message"></div>';
             body_message_display();
             for (let i = 0; i < data.info.length; i++){
                 if (data.info[i].fromUserName === username){
-                    document.getElementById('body_chat').innerHTML += '<div class="my_message">' +  data.info[i].message + '</div>'
+                    document.getElementById('body_chat_message').innerHTML += '<div class="content my_message">' +  data.info[i].message + '</div>'
                 }else {
-                    document.getElementById('body_chat').innerHTML += '<div class="other_message">' + data.info[i].message + '</div>'
+                    document.getElementById('body_chat_message').innerHTML += '<div class="content other_message">' + data.info[i].message + '</div>'
                 }
             }
         });
@@ -482,7 +491,7 @@
         get('/friend/list', {status : 1}, function (data) {
             tag_friend_display();
             if (data.code === 0){
-                document.getElementById('body_friend').innerHTML = '<div style="text-align: center">right 朋友们</div>';
+                document.getElementById('body_friend').innerHTML = '<li class="list-group-item" style="text-align: center">right 朋友们</li>';
                 for (let i = 0; i < data.info.length; i++){
                     let display_name;
                     let display_id;
@@ -493,8 +502,8 @@
                         display_name = data.info[i].fromUserName;
                         display_id = data.info[i].fromUserId;
                     }
-                    document.getElementById('body_friend').innerHTML +=  '<div onclick="body_message(this)" id="' + display_name + '" class="result"><div>' + display_name +'</div>' +
-                        '<div id="' + display_name + 'id' + '" style="display: none"> ' + display_id + '</div>' + '<div id="' + display_name + 'type' + '" style="display: none">' + 1 + '</div>' + '</div>'
+                    document.getElementById('body_friend').innerHTML +=  '<li onclick="body_message(this)" id="' + display_name + '" class="list-group-item result"><div>' + display_name +'</div>' +
+                        '<div id="' + display_name + 'id' + '" style="display: none"> ' + display_id + '</div>' + '<div id="' + display_name + 'type' + '" style="display: none">' + 1 + '</div>' + '</li>'
                 }
             }
         });
@@ -504,10 +513,10 @@
         get('/userGroup/list', {status: 1}, function (data) {
             tag_group_display();
             if (data.code === 0){
-                document.getElementById('body_group').innerHTML = ' <div style="text-align: center">right 群组</div>';
+                document.getElementById('body_group').innerHTML = ' <li style="text-align: center" class="list-group-item">right 群组</li>';
                 for (let i = 0; i < data.info.length; i++){
-                    document.getElementById('body_group').innerHTML += '<div onclick="body_message(this)" id="' + data.info[i].groupName + '" class="result"><div>' + data.info[i].groupName +'</div>' +
-                        '<div id="' + data.info[i].groupName + 'id' + '" style="display: none"> ' + data.info[i].groupId + '</div>' + '<div id="' + data.info[i].groupName + 'type' + '" style="display: none">' + 2 + '</div>' + '</div>'
+                    document.getElementById('body_group').innerHTML += '<li onclick="body_message(this)" id="' + data.info[i].groupName + '" class="result list-group-item"><div>' + data.info[i].groupName +'</div>' +
+                        '<div id="' + data.info[i].groupName + 'id' + '" style="display: none"> ' + data.info[i].groupId + '</div>' + '<div id="' + data.info[i].groupName + 'type' + '" style="display: none">' + 2 + '</div>' + '</li>'
                 }
             }
         });
@@ -611,7 +620,7 @@
 
     function web_socket_load() {
         if ('WebSocket' in window) {
-            websocket = new WebSocket(websocket_host + "?username=" + username);
+            websocket = new WebSocket(websocket_host + "?token=" + token);
         } else {
             alert('ERROR:当前浏览器不支持websocket')
         }
@@ -635,10 +644,10 @@
     function socket_message(json_str) {
         let data = JSON.parse(json_str);
         if (data.type === 1) {
-            if (data.message.fromUserName === username) {
-                document.getElementById('body_chat').innerHTML += '<div class="my_message">' + data.message.message + '</div>'
-            } else {
-                document.getElementById('body_chat').innerHTML += '<div class="other_message">' + data.message.message + '</div>'
+            if (data.message.fromUserName === username){
+                document.getElementById('body_chat_message').innerHTML += '<div class="content my_message">' +  data.message.message + '</div>'
+            }else {
+                document.getElementById('body_chat_message').innerHTML += '<div class="content other_message">' + data.message.message + '</div>'
             }
         }else {
             alert(data.msg);
