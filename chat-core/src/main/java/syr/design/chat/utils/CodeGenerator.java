@@ -23,18 +23,16 @@ public class CodeGenerator {
     /**
      * 读取控制台内容
      */
-    private static String scanner(String tip) {
+    private static String scanner() {
         Scanner scanner = new Scanner(System.in);
-        StringBuilder help = new StringBuilder();
-        help.append("请输入" + tip + "：");
-        System.out.println(help.toString());
+        System.out.println("请输入" + "表名" + "：");
         if (scanner.hasNext()) {
             String ipt = scanner.next();
             if (StringUtils.isNotEmpty(ipt)) {
                 return ipt;
             }
         }
-        throw new MybatisPlusException("请输入正确的" + tip + "！");
+        throw new MybatisPlusException("请输入正确的" + "表名" + "！");
     }
 
     /**
@@ -47,7 +45,7 @@ public class CodeGenerator {
         String projectPath = System.getProperty("user.dir");
         String microProjectPath = "/";
         gc.setOutputDir(projectPath + microProjectPath + "/src/main/java");
-        gc.setAuthor("cyan");
+        gc.setAuthor("syr");
         gc.setOpen(false);
         gc.setSwagger2(false);
         gc.setActiveRecord(true);
@@ -79,7 +77,7 @@ public class CodeGenerator {
         strategy.setEntityLombokModel(true);
         strategy.setRestControllerStyle(true);
         //strategy.setSuperControllerClass("BaseController");
-        strategy.setInclude(scanner("表名"));
+        strategy.setInclude(scanner());
         //strategy.setSuperEntityColumns("id");
         strategy.setControllerMappingHyphenStyle(true);
 //        strategy.setTablePrefix("p_", "t_", "w_");
