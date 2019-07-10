@@ -1,57 +1,67 @@
 package syr.design.chat.utils.juc;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+import javax.annotation.PreDestroy;
 import java.util.concurrent.*;
 
+/**
+ * @author shangyouren
+ * @since 2019-07-02
+ */
+@Slf4j
+@Component
 public class ExecutorUtils {
 
-    private static ExecutorUtils self;
+    private ExecutorService pool;
 
-    private static ExecutorService pool;
+    private ScheduledExecutorService scheduPool;
 
-    private static ScheduledExecutorService scheduPool;
-
-
-    static {
+    public ExecutorUtils() {
         int coreThreadSize = 5;
-        self = new ExecutorUtils();
         int maxRunnableSize = 30;
         BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<Runnable>(maxRunnableSize);
         int maxThreadSize = 10;
         int keepAliveTime = 1800;
-
-        //几种线程池初始化
         pool = new ThreadPoolExecutor(coreThreadSize,
                 maxThreadSize,
                 keepAliveTime,
                 TimeUnit.SECONDS,
                 workQueue,
-                new ThreadFactory(),
+                Thread::new,
                 (r, executor) -> {
-                    throw new RejectedExecutionException(r.toString() + executor.toString());
+                    throw new RejectedExecutionException("线程池已满:" + r.toString() + executor.toString());
                 });
-//        pool = Executors.newCachedThreasdPool();
-//        pool = Executors.newFixedThreadPool(maxThreadSize);
-//        pool = Executors.newSingleThreadExecutor();
-        System.out.println("[shangyouren]---------------------------EXECUTORUTILS");
-
-        scheduPool = new ScheduledThreadPoolExecutor(coreThreadSize, new ThreadFactory(),
+        scheduPool = new ScheduledThreadPoolExecutor(coreThreadSize, Thread::new,
                 (r, executor) -> {
-                    throw new RejectedExecutionException(r.toString() + executor.toString());
+                    throw new RejectedExecutionException("线程池已满:" + r.toString() + executor.toString());
                 });
     }
 
-    private ExecutorUtils(){}
-
-    public static ExecutorUtils getExecutor(){
-        return self;
+    @Deprecated
+    private ExecutorUtils(int threads) {
+        pool = Executors.newFixedThreadPool(threads);
+        pool = Executors.newSingleThreadExecutor();
     }
 
-    public static ExecutorService getPool(){
-        return pool;
+    public void submit(Runnable r){
+        if (r != null){
+            pool.submit(r);
+        }
     }
 
-    public static ScheduledExecutorService getScheduPool(){
-        return scheduPool;
+    public void submitSchedu(Runnable r, long time){
+        if (r != null){
+            scheduPool.schedule(r, time, TimeUnit.SECONDS);
+        }
+    }
+
+    @PreDestroy
+    public void shutdown(){
+        log.info("ExecutorUtils shutdown: close ...");
+        pool.shutdown();
+        scheduPool.shutdown();
+        log.info("ExecutorUtils shutdown: ok");
     }
 
 }
