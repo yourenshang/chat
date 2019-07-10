@@ -36,6 +36,7 @@ public class ExecutorUtils {
                 (r, executor) -> {
                     throw new RejectedExecutionException("线程池已满:" + r.toString() + executor.toString());
                 });
+        log.info("ExecutorUtils new: OK");
     }
 
     @Deprecated
