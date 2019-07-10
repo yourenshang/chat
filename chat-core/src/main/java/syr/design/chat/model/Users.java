@@ -32,7 +32,7 @@ public class Users extends Model<Users> {
      * 用户id
      */
     @JsonSerialize(using = ToStringSerializer.class)
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.ID_WORKER)
     private Long id;
 
     private String username;
