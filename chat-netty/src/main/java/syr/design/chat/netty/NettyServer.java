@@ -5,22 +5,25 @@ import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import syr.design.chat.utils.juc.ExecutorUtils;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 @Service
+@Slf4j
 public class NettyServer {
+
+    @Resource
+    private ExecutorUtils executorUtils;
 
     @PostConstruct
     public void initNetty(){
-        ExecutorUtils.getPool().submit(new Runnable() {
-            @Override
-            public void run() {
-                System.out.println("----------  netty启动开始  ---------");
-                runNetty();
-            }
+        executorUtils.submit(() -> {
+            log.info("NettyServer initNetty: netty 启动开始，端口：9006");
+            runNetty();
         });
     }
 
