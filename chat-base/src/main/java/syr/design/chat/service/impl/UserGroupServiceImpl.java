@@ -49,7 +49,8 @@ public class UserGroupServiceImpl extends ServiceImpl<UserGroupMapper, UserGroup
                 result = this.groupService.removeById(userGroup.getGroupId());
             }else {
                 if (lev.equals(EnumRoleLev.owner.value())){
-                    Role role = this.roleService.getOne(new LambdaQueryWrapper<Role>().eq(Role::getLev, EnumRoleLev.owner.value()));
+                    Role role = this.roleService.getOne(new LambdaQueryWrapper<Role>()
+                            .eq(Role::getLev, EnumRoleLev.owner.value()));
                     if (nextOwnerUserId == null){
                         UserGroup nextOwner = userGroups.get(0);
                         nextOwner.setRoleId(role.getId());

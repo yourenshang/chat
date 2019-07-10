@@ -6,7 +6,7 @@ package syr.design.chat.enums;
 public enum  EnumWebSocketMessageType {
 
     //前后端交互类型
-    message(1, "聊天消息"), dispay(2, "显示类型消息");
+    message(1, "聊天消息"), dispay(2, "显示类型消息"), pushed(3, "推送消息");
 
     private Integer value;
 

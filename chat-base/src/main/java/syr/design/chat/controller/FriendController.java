@@ -4,11 +4,15 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import syr.design.chat.enums.EnumFriendStatus;
 import syr.design.chat.enums.EnumResultCode;
+import syr.design.chat.enums.EnumWebSocketMessageType;
 import syr.design.chat.model.Friend;
 import syr.design.chat.model.Result;
+import syr.design.chat.model.SocketMessage;
 import syr.design.chat.model.Users;
 import syr.design.chat.service.IFriendService;
 import syr.design.chat.service.IUsersService;
+import syr.design.chat.utils.GenUtils;
+
 import javax.annotation.Resource;
 
 /**
@@ -41,6 +45,7 @@ public class FriendController extends BaseController {
             return result(EnumResultCode.FAIL, "没有这个用户呢，您是寂寞了么，不如找我们的陈卓帅哥聊一聊（17640150504）");
         }
         Friend friend = this.friendService.findFriend(userId, friendUserId);
+        SocketMessage socketMessage = GenUtils.getSocketMessage(users.getUsername(), users.getId(), null,  EnumWebSocketMessageType.pushed.value(), users.getUsername() + "申请添加成为您的朋友", null);
         if (friend == null) {
             friend = new Friend();
             friend.setFromUserId(userId);
@@ -49,6 +54,7 @@ public class FriendController extends BaseController {
             friend.setFromUserName(users.getUsername());
             friend.setToUserName(friendUser.getUsername());
             this.friendService.save(friend);
+
             return result(EnumResultCode.SUCCESS);
         } else {
             if (friend.getStatus().equals(EnumFriendStatus.agree.value())) {

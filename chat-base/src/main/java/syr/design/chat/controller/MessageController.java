@@ -1,14 +1,12 @@
 package syr.design.chat.controller;
 
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import syr.design.chat.enums.EnumMessageSendType;
-import syr.design.chat.enums.EnumMessageType;
 import syr.design.chat.model.Message;
 import syr.design.chat.model.Result;
 import syr.design.chat.service.IMessageService;
