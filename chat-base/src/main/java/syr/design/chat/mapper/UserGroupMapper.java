@@ -19,7 +19,9 @@ public interface UserGroupMapper extends BaseMapper<UserGroup> {
 
     List<UserGroup> findByGroupId(Long groupId);
 
-    //查找groups
+    /**
+     * 查找groups
+     */
     List<Groups> getGroupByUserId(@Param("userId") Long userId, @Param("status") Integer status);
 
     List<UserGroup> findWaitAgree(@Param("userId") Long userId, @Param("lev") Integer lev, @Param("status") Integer status);
