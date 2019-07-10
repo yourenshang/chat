@@ -94,7 +94,6 @@ public class WebSocketManager {
             return;
         }
         group.writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(socketMessage)));
-        System.out.println("[socket message]" + JSON.toJSONString(message));
     }
 
     public void sendMessageToGroup(List<Users> toUsers, Users fromUsers, Message message) {

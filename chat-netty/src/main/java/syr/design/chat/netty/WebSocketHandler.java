@@ -87,7 +87,6 @@ public class WebSocketHandler extends SimpleChannelInboundHandler<Object> {
             return;
         }
         String text = ((TextWebSocketFrame) frame).text();
-        System.out.println(text);
         ApplicationContext context = SpringUtils.getApplicationContext();
         JJWTUtil jjwtUtil = context.getBean(JJWTUtil.class);
         SocketMessage socketMessage = GenUtils.getSocketMessage(JSON.parseObject(text));
