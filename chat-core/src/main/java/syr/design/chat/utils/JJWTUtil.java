@@ -16,7 +16,7 @@ import java.util.*;
 /**
  * JWT 工具类
  *
- * @author cyan
+ * @author syr
  * @since 2019/3/7
  */
 @Slf4j

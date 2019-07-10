@@ -15,7 +15,7 @@ import java.util.Scanner;
 /**
  * 代码生成器
  *
- * @author cyan
+ * @author syr
  * @since 2019/3/5
  */
 public class CodeGenerator {

@@ -11,7 +11,7 @@ import syr.design.chat.service.IRoleService;
  *  服务实现类
  * </p>
  *
- * @author cyan
+ * @author syr
  * @since 2019-04-28
  */
 @Service

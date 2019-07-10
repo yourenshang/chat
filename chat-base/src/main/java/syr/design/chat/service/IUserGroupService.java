@@ -12,7 +12,7 @@ import java.util.List;
  *  服务类
  * </p>
  *
- * @author cyan
+ * @author syr
  * @since 2019-04-28
  */
 public interface IUserGroupService extends IService<UserGroup> {

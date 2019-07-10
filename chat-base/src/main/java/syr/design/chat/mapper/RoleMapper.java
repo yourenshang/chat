@@ -8,7 +8,7 @@ import syr.design.chat.model.Role;
  *  Mapper 接口
  * </p>
  *
- * @author cyan
+ * @author syr
  * @since 2019-04-28
  */
 public interface RoleMapper extends BaseMapper<Role> {

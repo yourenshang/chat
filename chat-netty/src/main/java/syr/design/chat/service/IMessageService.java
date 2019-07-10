@@ -8,7 +8,7 @@ import syr.design.chat.model.Message;
  *  服务类
  * </p>
  *
- * @author cyan
+ * @author syr
  * @since 2019-04-28
  */
 public interface IMessageService extends IService<Message> {
