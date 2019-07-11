@@ -53,7 +53,7 @@ public class GroupController extends BaseController{
         group = new Groups();
         group.setGroupName(groupName);
         boolean result = this.groupService.add(group, userId);
-        return result(EnumResultCode.SUCCESS);
+        return result(result);
     }
 
     /**
@@ -78,7 +78,7 @@ public class GroupController extends BaseController{
             return result(EnumResultCode.FAIL, "您没有删除这个群的权限呢");
         }
         boolean result = this.groupService.del(group);
-        return result(EnumResultCode.SUCCESS);
+        return result(result);
     }
 
     /**
