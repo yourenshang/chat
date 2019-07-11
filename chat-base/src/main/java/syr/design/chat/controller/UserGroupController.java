@@ -113,7 +113,7 @@ public class UserGroupController extends BaseController {
         }
         Role role = this.roleService.getById(userGroup.getRoleId());
         boolean result = this.userGroupService.refund(userGroup, nextOwnerUserId, role.getLev());
-        return result(EnumResultCode.SUCCESS);
+        return result(result);
     }
 
     /**
