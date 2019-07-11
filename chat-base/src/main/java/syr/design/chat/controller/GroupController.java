@@ -14,9 +14,7 @@ import syr.design.chat.model.UserGroup;
 import syr.design.chat.service.IGroupService;
 import syr.design.chat.service.IRoleService;
 import syr.design.chat.service.IUserGroupService;
-
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * <p>
